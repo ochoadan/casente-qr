@@ -1,8 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import clsx from "clsx";
-import Navbar from "@/components/Global/navbar";
-import Container from "@/components/Global/container";
+import Navbar from "@/components/qr/navbar";
+import Container from "@/components/container";
 
 import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
@@ -31,10 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={clsx("bg-stone-100", inter.className)}>
-        <Navbar />
-        <Container>{children}</Container>
-      </body>
+      <body className={clsx("bg-stone-100", inter.className)}>{children}</body>
     </html>
   );
 }
