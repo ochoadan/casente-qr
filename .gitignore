@@ -39,3 +39,5 @@ next-env.d.ts
 # Development
 # Ignore folders starting with "dev"
 **/dev/
+**/**/*.old
+**/**/*.new

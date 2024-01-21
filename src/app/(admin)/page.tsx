@@ -9,7 +9,7 @@ import CreateBatch from "./createBatch";
 const Page = async () => {
   const session = await auth();
   if (!session) {
-    redirect("/a/signin");
+    redirect("/signin");
   }
 
   return (

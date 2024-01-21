@@ -58,16 +58,19 @@ model batches {
   updatedAt DateTime  @updatedAt
   // 
   name      String
+  quantity  Int
   qrcodes   QRCodes[]
 }
 
 model QRCodes {
-  id         String   @id @default(nanoid(8))
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id           String   @id @default(nanoid(8))
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   // 
-  url        String   @unique
-  unlockCode String
-  batchId    String
-  batches    batches? @relation(fields: [batchId], references: [id])
+  isUnlocked   Boolean  @default(false)
+  pointsToUrl  String?
+  fullImageUrl String   @unique
+  unlockCode   String
+  batchId      String
+  batches      batches? @relation(fields: [batchId], references: [id], onDelete: Cascade)
 }

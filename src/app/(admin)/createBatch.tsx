@@ -1,6 +1,7 @@
 "use client";
 
 import { Combobox } from "@headlessui/react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MdOutlineAlternateEmail } from "react-icons/md";
@@ -9,12 +10,11 @@ const CreateBatch = () => {
   const router = useRouter();
   const [batchCreate, setBatchCreate] = useState(false);
   // const [selected, setSelected] = useState(domains[0]);
-  const [query, setQuery] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [isAwaitingResponse, setAwaitingResponse] = useState(false);
   const [responseData, setResponseData] = useState<any>(null);
   const [formData, setFormData] = useState({
-    quantity: 10,
+    quantity: 1,
     colorFill: "",
   });
 
@@ -26,14 +26,15 @@ const CreateBatch = () => {
     }));
   };
 
-  async function handleSubmit(formData: FormData) {
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    setAwaitingResponse(true);
+    setError(null);
     try {
-      setLoading(true);
-      setError(null);
-
       const rawFormData = {
-        quantity: formData.get("quantity"),
-        colorFill: formData.get("colorFill"),
+        ...formData,
+        // quantity: formData.get("quantity"),
+        // colorFill: formData.get("colorFill"),
       };
       const response = await fetch("/api/create-qr", {
         method: "POST",
@@ -53,18 +54,19 @@ const CreateBatch = () => {
       console.error("Error:", error);
       setError("An error occurred. Please try again.");
     } finally {
-      setLoading(false);
+      setAwaitingResponse(false);
     }
-  }
+  };
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between md:flex-nowrap px-4 py-5 sm:px-6">
+      <div className="flex flex-wrap items-center justify-between md:flex-nowrap px-4 sm:px-6 h-20">
         <div>
           <h3 className="text-base font-semibold leading-6 text-gray-900">
             QR Code Batches
           </h3>
         </div>
+
         <div className="flex-shrink-0">
           {!batchCreate && (
             <div className="mt-3 sm:ml-4 sm:mt-0">
@@ -81,7 +83,8 @@ const CreateBatch = () => {
       </div>
 
       {batchCreate && (
-        <form action={handleSubmit} className="pb-2">
+        // <form action={handleSubmit} className="pb-2">
+        <form onSubmit={handleSubmit} className="pb-2">
           <div className="mx-4 lg:mx-8 my-2 flex-wrap items-center justify-between md:flex">
             <div className="flex space-x-8 mt-2">
               <div className="w-1/2 min-w-0 flex-1 relative">
@@ -123,19 +126,49 @@ const CreateBatch = () => {
               </div>
             </div>
             <div className="flex mt-3 items-center justify-end gap-x-6">
-              <button
-                type="button"
-                className="text-sm font-semibold leading-6 text-gray-900"
-                onClick={() => setBatchCreate(false)}
-              >
-                Cancel
-              </button>
+              {!isAwaitingResponse && (
+                <button
+                  type="button"
+                  className="text-sm font-semibold leading-6 text-gray-900"
+                  onClick={() => setBatchCreate(false)}
+                >
+                  Cancel
+                </button>
+              )}
               <button
                 type="submit"
-                // disabled={loading}
+                disabled={isAwaitingResponse}
                 className="inline-flex justify-center rounded-md bg-sky-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
               >
-                {loading ? "Creating..." : "Create"}
+                {isAwaitingResponse && (
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="mr-2"
+                  >
+                    <path
+                      fill="#FFFFFF"
+                      d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,19a8,8,0,1,1,8-8A8,8,0,0,1,12,20Z"
+                      opacity=".25"
+                    />
+                    <path
+                      fill="#FFFFFF"
+                      d="M10.14,1.16a11,11,0,0,0-9,8.92A1.59,1.59,0,0,0,2.46,12,1.52,1.52,0,0,0,4.11,10.7a8,8,0,0,1,6.66-6.61A1.42,1.42,0,0,0,12,2.69h0A1.57,1.57,0,0,0,10.14,1.16Z"
+                    >
+                      <animateTransform
+                        attributeName="transform"
+                        type="rotate"
+                        dur="0.75s"
+                        values="0 12 12;360 12 12"
+                        repeatCount="indefinite"
+                      />
+                    </path>
+                  </svg>
+                )}
+
+                {isAwaitingResponse ? "Loading..." : "Create"}
               </button>
             </div>
           </div>
@@ -143,11 +176,27 @@ const CreateBatch = () => {
       )}
       {responseData && (
         <div className="mx-4 lg:mx-8 py-2 flex-wrap items-center justify-between md:flex">
-          {responseData.slug}
-          <br />
-          {responseData.quantity}
-          <br />
-          {responseData.colorFill}
+          {responseData.files.map((item: any) => (
+            <div className="max-w-sm mx-auto m-12">
+              <Image
+                src={item.smallQrCodeDataUrl}
+                alt="QR Code"
+                width={200}
+                height={200}
+                quality={100}
+              />
+            </div>
+          ))}
+
+          {/* <pre>{JSON.stringify(responseData, null, 2)}</pre> */}
+        </div>
+      )}
+      {error && (
+        <div className="mx-4 lg:mx-8 py-2 flex-wrap items-center justify-between md:flex">
+          <div className="max-w-sm mx-auto m-12">
+            <p className="text-red-500">{error}</p>
+            <pre>{JSON.stringify(error, null, 2)}</pre>
+          </div>
         </div>
       )}
     </>

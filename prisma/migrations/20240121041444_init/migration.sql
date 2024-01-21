@@ -50,6 +50,7 @@ CREATE TABLE "batches" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
+    "quantity" INTEGER NOT NULL,
 
     CONSTRAINT "batches_pkey" PRIMARY KEY ("id")
 );
@@ -59,7 +60,8 @@ CREATE TABLE "QRCodes" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
-    "url" TEXT NOT NULL,
+    "pointsToUrl" TEXT,
+    "fullImageUrl" TEXT NOT NULL,
     "unlockCode" TEXT NOT NULL,
     "batchId" TEXT NOT NULL,
 
@@ -82,7 +84,7 @@ CREATE UNIQUE INDEX "VerificationToken_token_key" ON "VerificationToken"("token"
 CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationToken"("identifier", "token");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "QRCodes_url_key" ON "QRCodes"("url");
+CREATE UNIQUE INDEX "QRCodes_fullImageUrl_key" ON "QRCodes"("fullImageUrl");
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -91,4 +93,4 @@ ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId"
 ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "QRCodes" ADD CONSTRAINT "QRCodes_batchId_fkey" FOREIGN KEY ("batchId") REFERENCES "batches"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "QRCodes" ADD CONSTRAINT "QRCodes_batchId_fkey" FOREIGN KEY ("batchId") REFERENCES "batches"("id") ON DELETE CASCADE ON UPDATE CASCADE;
