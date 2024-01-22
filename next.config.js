@@ -15,6 +15,9 @@ const nextConfig = {
       { source: "/a", destination: "/", permanent: false },
     ];
   },
+  images: {
+    domains: ['casente.s3.us-east-2.amazonaws.com', 'casente-public.s3.us-east-2.amazonaws.com', 's3.us-east-2.amazonaws.com'],
+  },
 };
 
 module.exports = nextConfig;

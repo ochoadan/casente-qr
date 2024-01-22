@@ -5,8 +5,12 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import Container from "../container";
 import Logo from "../logo";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Navbar() {
+  const pathname = usePathname();
+  const isRootPage = pathname === "/";
+
   return (
     <Disclosure as="nav" className="bg-white shadow">
       {({ open }) => (
@@ -15,17 +19,33 @@ export default function Navbar() {
             <div className="flex h-16 justify-between">
               <div className="flex">
                 <div className="flex flex-shrink-0 items-center">
-                  <Logo className="h-8 w-auto" />
+                  {isRootPage ? (
+                    <Logo className="h-8 w-auto" />
+                  ) : (
+                    <Link href={"/"}>
+                      <Logo className="h-8 w-auto" />
+                    </Link>
+                  )}
                 </div>
               </div>
               {/* <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
                 <Link
-                  href="#"
-                  className="rounded-md px-3 py-2 text-sm font-semibold text-gray-900 hover:shadow-sm hover:bg-gray-50"
+                href="#"
+                className="rounded-md px-3 py-2 text-sm font-semibold text-gray-900 hover:shadow-sm hover:bg-gray-50"
                 >
-                  Sign Out
+                Sign Out
                 </Link>
               </div> */}
+              <div className="hidden sm:ml-6 sm:flex sm:items-center space-x-4">
+                <Link
+                  href="https://www.halfnine.com/contact/"
+                  // href="https://casente.se/kontakt/"
+                  target="_blank"
+                  className="rounded-md bg-sky-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+                >
+                  Contact us
+                </Link>
+              </div>
               <div className="-mr-2 flex items-center sm:hidden">
                 {/* Mobile menu button */}
                 <Disclosure.Button className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-sky-500">
@@ -69,7 +89,8 @@ export default function Navbar() {
             </div>
           </Disclosure.Panel>
         </>
-      )}
-    </Disclosure>
+      )
+      }
+    </Disclosure >
   );
 }

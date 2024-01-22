@@ -2,7 +2,7 @@
 
 import { Combobox } from "@headlessui/react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MdOutlineAlternateEmail } from "react-icons/md";
 
@@ -16,6 +16,7 @@ const CreateBatch = () => {
   const [formData, setFormData] = useState({
     quantity: 1,
     colorFill: "",
+    batchName: "",
   });
 
   const handleInputChange = (e: any) => {
@@ -33,8 +34,6 @@ const CreateBatch = () => {
     try {
       const rawFormData = {
         ...formData,
-        // quantity: formData.get("quantity"),
-        // colorFill: formData.get("colorFill"),
       };
       const response = await fetch("/api/create-qr", {
         method: "POST",
@@ -44,8 +43,9 @@ const CreateBatch = () => {
       if (response.status === 200) {
         console.log("Success:", await response);
         setBatchCreate(false);
-        setResponseData(await response.json());
-        // router.refresh();
+        const routerResponseData = await response.json();
+        setResponseData(routerResponseData)
+        router.push(`/batch/${routerResponseData.batchId}`);
       } else {
         const errorData = await response.json();
         setError(errorData.message);
@@ -65,6 +65,9 @@ const CreateBatch = () => {
           <h3 className="text-base font-semibold leading-6 text-gray-900">
             QR Code Batches
           </h3>
+          <p className="mt-1 text-sm text-gray-500">
+            Each code takes about second to be created.
+          </p>
         </div>
 
         <div className="flex-shrink-0">
@@ -87,6 +90,23 @@ const CreateBatch = () => {
         <form onSubmit={handleSubmit} className="pb-2">
           <div className="mx-4 lg:mx-8 my-2 flex-wrap items-center justify-between md:flex">
             <div className="flex space-x-8 mt-2">
+              <div className="w-1/2 min-w-0 flex-1 relative">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium leading-6 text-gray-900"
+                >
+                  Batch Label
+                </label>
+                <input
+                  type="text"
+                  name="batchName"
+                  id="batchName"
+                  value={formData.batchName}
+                  onChange={handleInputChange}
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-sky-600 sm:text-sm sm:leading-6"
+                  placeholder="Untitled Batch"
+                />
+              </div>
               <div className="w-1/2 min-w-0 flex-1 relative">
                 <label
                   htmlFor="name"
@@ -174,7 +194,7 @@ const CreateBatch = () => {
           </div>
         </form>
       )}
-      {responseData && (
+      {/* {responseData && (
         <div className="mx-4 lg:mx-8 py-2 flex-wrap items-center justify-between md:flex">
           {responseData.files.map((item: any) => (
             <div className="max-w-sm mx-auto m-12">
@@ -188,9 +208,10 @@ const CreateBatch = () => {
             </div>
           ))}
 
-          {/* <pre>{JSON.stringify(responseData, null, 2)}</pre> */}
+          <pre>{JSON.stringify(responseData, null, 2)}</pre>
+          {responseData.batchId}
         </div>
-      )}
+      )} */}
       {error && (
         <div className="mx-4 lg:mx-8 py-2 flex-wrap items-center justify-between md:flex">
           <div className="max-w-sm mx-auto m-12">

@@ -1,56 +1,59 @@
 import prisma from "./prisma";
 
-// export async function getDomainData() {
-//   const response = await prisma.domains.findMany();
 
-//   const domainsData = response.map((item: any) => ({
-//     id: item.id,
-//     name: item.domain,
-//   }));
+export async function verifyCodeDirection(batchId: string) {
+  const response = await prisma.qRCodes.findFirst({
+    where: {
+      id: batchId,
+    },
+  });
 
-//   return domainsData;
-// }
+  if (response && response.isUnlocked) {
+    return { success: true, redirectUrl: response.pointsToUrl };
+  } else if (response && !response.isUnlocked) {
+    return { success: true };
+  } else {
+    return false;
+  }
+}
+export async function verifyBatchExistence(batchId: string) {
+  const response = await prisma.batches.findFirst({
+    where: {
+      id: batchId,
+    },
+  });
 
-// export async function getUsersRoutes({ session }: any) {
-//   const response = await prisma.emailRoutes.findMany({
-//     where: {
-//       createdById: session.user.id,
-//     },
-//   });
-
-//   const routesData = response.map((item: any) => ({
-//     id: item.id,
-//     name: item.domain,
-//     toEmail: item.toEmail,
-//     fromEmail: item.fromEmail,
-//     // priority: item.priority,
-//     // description: item.description,
-//     // expression: item.expression,
-//   }));
-
-//   return routesData;
-// }
+  if (response) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 export async function getBatches() {
   const response = await prisma.batches.findMany();
 
   const batchesData = response.map((item: any) => ({
     id: item.id,
+    createdAt: item.createdAt,
     name: item.name,
+    quantity: item.quantity,
   }));
+
+  // Sort the batchesData array by createdAt in descending order
+  batchesData.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
   return batchesData;
 }
 
 export async function getBatchesData(requestBatchId: string) {
-  const response = await prisma.qRCodes.findMany({
+  const response = await prisma.batches.findUnique({
     where: {
-      batchId: requestBatchId,
+      id: requestBatchId,
+    },
+    include: {
+      qrcodes: true,
     },
   });
-  const batchData = response.map((item: any) => ({
-    id: item.id,
-    url: item.url,
-  }));
-  return batchData;
+  return response;
 }

@@ -53,24 +53,27 @@ model VerificationToken {
 }
 
 model batches {
-  id        String    @id @default(cuid())
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id          String    @id @default(cuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   // 
-  name      String
-  quantity  Int
-  qrcodes   QRCodes[]
+  name        String
+  quantity    Int
+  batchZipUrl String
+  csvUrl      String
+  qrcodes     QRCodes[]
 }
 
 model QRCodes {
-  id           String   @id @default(nanoid(8))
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String   @id @default(nanoid(8))
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
   // 
-  isUnlocked   Boolean  @default(false)
-  pointsToUrl  String?
-  fullImageUrl String   @unique
-  unlockCode   String
-  batchId      String
-  batches      batches? @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  isUnlocked    Boolean  @default(false)
+  pointsToUrl   String?
+  fullImageUrl  String   @unique
+  smallImageUrl String   @unique
+  unlockCode    String
+  batchId       String
+  batches       batches? @relation(fields: [batchId], references: [id], onDelete: Cascade)
 }

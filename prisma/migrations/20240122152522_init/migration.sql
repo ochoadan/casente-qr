@@ -51,6 +51,8 @@ CREATE TABLE "batches" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "name" TEXT NOT NULL,
     "quantity" INTEGER NOT NULL,
+    "batchZipUrl" TEXT NOT NULL,
+    "csvUrl" TEXT NOT NULL,
 
     CONSTRAINT "batches_pkey" PRIMARY KEY ("id")
 );
@@ -60,8 +62,10 @@ CREATE TABLE "QRCodes" (
     "id" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "isUnlocked" BOOLEAN NOT NULL DEFAULT false,
     "pointsToUrl" TEXT,
     "fullImageUrl" TEXT NOT NULL,
+    "smallImageUrl" TEXT NOT NULL,
     "unlockCode" TEXT NOT NULL,
     "batchId" TEXT NOT NULL,
 
@@ -85,6 +89,9 @@ CREATE UNIQUE INDEX "VerificationToken_identifier_token_key" ON "VerificationTok
 
 -- CreateIndex
 CREATE UNIQUE INDEX "QRCodes_fullImageUrl_key" ON "QRCodes"("fullImageUrl");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "QRCodes_smallImageUrl_key" ON "QRCodes"("smallImageUrl");
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
