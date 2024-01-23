@@ -69,7 +69,7 @@ export const POST = auth(async (req) => {
       // Generate the QR code images
       const [fileDataUrl, smallFileDataUrl] = await Promise.all([
         new QRCodeCanvas({ ...options, width: 3000, height: 3000 }).toDataUrl("png"),
-        new QRCodeCanvas({ ...options, width: 200, height: 200 }).toDataUrl("png"),
+        new QRCodeCanvas({ ...options, width: 50, height: 50 }).toDataUrl("png"),
       ]);
 
       // Upload the QR code image to the S3 bucket

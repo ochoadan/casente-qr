@@ -19,13 +19,15 @@ const Page = async () => {
   return (
     <>
       <Navbar />
-      <Container>
-        {/* <Qrcode /> */}
+      {/* <Container> */}
+      {/* <Qrcode /> */}
+      <div className="w-full mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="divide-y divide-gray-200 bg-white shadow sm:rounded-xl my-4">
           <CreateBatch />
           <BatchesMap data={domainsData} />
         </div>
-      </Container>
+        {/* </Container> */}
+      </div>
     </>
   );
 };

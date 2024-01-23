@@ -29,6 +29,10 @@ const CreateBatch = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    if (formData.quantity > 10) {
+      setError("This is a test application, Quantity cannot exceed 10");
+      return;
+    }
     setAwaitingResponse(true);
     setError(null);
     try {
@@ -60,27 +64,25 @@ const CreateBatch = () => {
 
   return (
     <>
-      <div className="flex flex-wrap items-center justify-between md:flex-nowrap px-4 sm:px-6 h-20">
+      <div className="flex flex-wrap items-center justify-between md:flex-nowrap px-4 sm:px-6 py-4 space-y-2">
         <div>
           <h3 className="text-base font-semibold leading-6 text-gray-900">
             QR Code Batches
           </h3>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="text-sm text-gray-500">
             Each code takes about second to be created.
           </p>
         </div>
 
         <div className="flex-shrink-0">
           {!batchCreate && (
-            <div className="mt-3 sm:ml-4 sm:mt-0">
-              <button
-                onClick={() => setBatchCreate(true)}
-                type="button"
-                className="inline-flex items-center rounded-md bg-sky-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
-              >
-                Create new
-              </button>
-            </div>
+            <button
+              onClick={() => setBatchCreate(true)}
+              type="button"
+              className="inline-flex items-center rounded-md bg-sky-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600"
+            >
+              Create new
+            </button>
           )}
         </div>
       </div>
@@ -112,7 +114,7 @@ const CreateBatch = () => {
                   htmlFor="name"
                   className="block text-sm font-medium leading-6 text-gray-900"
                 >
-                  Number of Codes
+                  Quantity
                 </label>
                 <input
                   type="number"
@@ -214,9 +216,9 @@ const CreateBatch = () => {
       )} */}
       {error && (
         <div className="mx-4 lg:mx-8 py-2 flex-wrap items-center justify-between md:flex">
-          <div className="max-w-sm mx-auto m-12">
+          <div className="max-w-md mx-auto m-12">
             <p className="text-red-500">{error}</p>
-            <pre>{JSON.stringify(error, null, 2)}</pre>
+            {/* <pre>{JSON.stringify(error, null, 2)}</pre> */}
           </div>
         </div>
       )}
