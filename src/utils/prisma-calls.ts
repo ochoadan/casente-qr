@@ -41,7 +41,7 @@ export async function getBatches() {
   }));
 
   // Sort the batchesData array by createdAt in descending order
-  batchesData.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  batchesData.sort((a: any, b: any) => b.createdAt.getTime() - a.createdAt.getTime());
 
   return batchesData;
 }

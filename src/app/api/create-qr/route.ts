@@ -51,7 +51,7 @@ export const POST = auth(async (req) => {
         existingQRCode = await prisma.qRCodes.findUnique({ where: { id: slug }, });
       } while (existingQRCode);
 
-      const qrUrl = `HTTPS://0PC.CC/C/${slug}`;
+      const qrUrl = `https://0pc.cc/c/${slug}`;
 
       // Define the options for the QR code generation
       const options: Partial<Options> = {
@@ -117,19 +117,27 @@ export const POST = auth(async (req) => {
     const upload = new Upload({ client, params: { Bucket: "casente", Key: `${batchId}.zip`, Body: zipBuffer, ContentType: "application/zip", }, });
     await upload.done();
 
-    // Create a CSV file and upload it to the S3 bucket
-    const createCsvWriter = require('csv-writer').createObjectCsvWriter;
-    const csvWriter = createCsvWriter({
-      path: "batch.csv",
-      header: [{ id: "id", title: "ID" }, { id: "url", title: "URL" }, { id: "unlockCode", title: "Unlock Code" }],
-    });
-    const csvRecords = files.map((file) => ({ id: file.id, url: file.url, unlockCode: file.unlockCode, }));
-    await csvWriter.writeRecords(csvRecords);
-    const csvBuffer = fs.readFileSync("batch.csv");
-    const putParams = { Bucket: "casente", Key: `${batchId}.csv`, Body: csvBuffer, ContentType: "text/csv", };
-    const putCommand = new PutObjectCommand(putParams);
-    await client.send(putCommand);
 
+    // Create a CSV file and upload it to the S3 bucket
+    const { stringify } = require('csv-stringify');
+    const csvRecords = files.map((file) => ({ id: file.id, url: file.url, unlockCode: file.unlockCode }));
+    let csvString = '';
+    stringify(csvRecords, { header: ['ID', 'URL', 'Unlock Code'] })
+      .on('readable', function (this: any) {
+        let row;
+        while ((row = this.read())) {
+          csvString += row;
+        }
+      })
+      .on('error', function (err: any) {
+        throw err;
+      })
+      .on('end', async function () {
+        const csvBuffer = Buffer.from(csvString, 'utf-8');
+        const putParams = { Bucket: 'casente', Key: `${batchId}.csv`, Body: csvBuffer, ContentType: 'text/csv' };
+        const putCommand = new PutObjectCommand(putParams);
+        await client.send(putCommand);
+      });
 
 
     await prisma.batches.update({

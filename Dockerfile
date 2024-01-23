@@ -29,6 +29,7 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 # ENV NEXT_TELEMETRY_DISABLED 1
 RUN apk add fontconfig
+RUN yarn run prisma generate
 RUN yarn build
 
 # If using npm comment out above and use below instead
@@ -46,6 +47,7 @@ RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/prisma ./prisma
 
 # Set the correct permission for prerender cache
 RUN apk add fontconfig
