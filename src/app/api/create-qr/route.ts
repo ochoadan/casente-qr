@@ -6,14 +6,13 @@ import { nanoid } from "nanoid";
 import { QRCodeCanvas, Options } from "@loskir/styled-qr-code-node";
 import { createId } from "@paralleldrive/cuid2";
 import archiver from "archiver";
-import fs from "fs";
 
 // Create an instance of the S3 client
 const client = new S3Client({
   region: "us-east-2",
   credentials: {
-    accessKeyId: "AKIA4MTWK5DZZOJRCK4C",
-    secretAccessKey: "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",
+    accessKeyId: "AKIA4MTWK5DZUPZGKDHX",
+    secretAccessKey: "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",
   },
 });
 
